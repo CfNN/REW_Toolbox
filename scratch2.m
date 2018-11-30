@@ -77,6 +77,7 @@ toc
     
 studytime = GetSecs-trigger
 
+% This is just junk code for pulling out timing info. Will be handled in a seperate function later...
 % trials1=trials;
 % for i = 1:(n*n_block)
 %     trials1(runningVals.currentTrial).BetOnsetTimestamp=trials1(runningVals.currentTrial).BetOnsetTimestamp-trigger;
@@ -106,75 +107,5 @@ studytime = GetSecs-trigger
 % dlmwrite('neutralF.txt',[trials1(find(conds==7)).FeedOnsetTimestamp]');
 
 
-    
-    % To be set during/after the trial - initially set to NaN (not a number)
-    trials(runningVals.currentTrial).Answer = NaN;     % Lower=1, higher=2
-    trials(runningVals.currentTrial).Correct = false; %Boolean indicating whether Answer matches CorrectAnswer
-    trials(runningVals.currentTrial).GoRT = NaN;
-    trials(runningVals.currentTrial).SSD_intended = NaN;
-    trials(runningVals.currentTrial).SSD_actual = NaN;
-    % Timestamps
-    trials(runningVals.currentTrial).GoSignalOnsetTimestamp = NaN;
-    trials(runningVals.currentTrial).GoSignalOffsetTimestamp = NaN;
-    trials(runningVals.currentTrial).StopSignalOnsetTimestamp = NaN;
-    trials(runningVals.currentTrial).StopSignalOffsetTimestamp = NaN;
-    trials(runningVals.currentTrial).ResponseTimestamp = NaN;
-    
-    trials(runningVals.currentTrial).FixationOffsetTimestamp = NaN;
-    trials(runningVals.currentTrial).BlankOnsetTimestamp = NaN;
-    trials(runningVals.currentTrial).BlankOffsetTimestamp = NaN;
-end
 
-possibleStopTrialPos = n_enforcedInitialGoTrials+1:n_trials;
-stopTrialInds = randsample(possibleStopTrialPos, n_stopTrials);
-
-% Boolean vector to keep track of which trials are stop trials
-stop_trial = false(n_trials, 1);
-stop_trial(stopTrialInds) = true;
-
-% Assume that there might initially be too many consecutive stop trials 
-% somewhere in the array
-tooManyConsecutiveStopTrials = true; 
-
-while(tooManyConsecutiveStopTrials)
-    tooManyConsecutiveStopTrials = false;
-    
-    nConsecStop = 0;
-    for i = 1:n_trials
-        if stop_trial(runningVals.currentTrial)
-            nConsecStop = nConsecStop + 1;
-            if nConsecStop > n_maxConsecStopTrials
-                tooManyConsecutiveStopTrials = true;
-                stop_trial(runningVals.currentTrial) = false;
-                % Choose a random go trial, after the enforced period of 
-                % initial go trials, to change to a stop trial
-                newStopTrialLoc = randsample(find(not(stop_trial(n_enforcedInitialGoTrials+1:end) )), 1) + n_enforcedInitialGoTrials;
-                stop_trial(newStopTrialLoc) = true;
-            end
-        else
-            nConsecStop = 0;
-        end
-
-    end
-end
-
-% Set a random half of the stop trials to staircase 1, the other half will
-% be staircase 2
-staircase1 = false(size(stop_trial));
-staircase1(randsample(find(stop_trial), n_stopTrials/2)) = true;
-
-for i = 1:n_trials
-    if stop_trial(runningVals.currentTrial)
-        if staircase1(runningVals.currentTrial)
-            trials(runningVals.currentTrial).Procedure = 'StITrial';
-        else
-            trials(runningVals.currentTrial).Procedure = 'StITrial2';
-        end
-        trials(runningVals.currentTrial).CorrectAnswer = 0;
-    end
-end
-
-assignin('base', 'trials', trials);
-save('CURRENTTRIALS.mat', 'trials');
-disp('Random ''trials'' struct saved as CURRENTTRIALS.mat');
 

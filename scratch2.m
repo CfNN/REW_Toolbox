@@ -1,13 +1,57 @@
 function scratch2()
+% This will be renamed to Main_REW when ready for testing
+% To run an experiment session, enter "Main_SSRT" into the MATLAB console, 
+% or press the "Run" betton in the menu above under the "EDITOR" tab. 
 
-% Condition and stim names
+% Clear the workspace and the screen, close all plot windows
+close all;
+clear;
+sca;
+
+% Set user-defined variables to configure experiment. creates a workspace
+% struct variable called 'settings'. Settings variables should NEVER change
+% during the experiment session. 
+ExperimentSettings;
+
+% Set up running values that change during the experiment session (live 
+% performance metrics, two changing stop-signal delays associated with the 
+% two staircases) 
+InitRunningVals;   
+
+% Timestamps for beginning of experiment
+sessionStartDateTime = datevec(now);
+runningVals.GetSecsStart = GetSecs;
+
+% Use dialog boxes to get subject number, session number, etc. from the experimenter
+[subjectNumber, sessionNumber, subjectHandedness, runningVals, cancelled] = GetSessionConfig(settings, runningVals);
+if (cancelled)
+    disp('Session cancelled by experimenter');
+    return; % Stops this script from running to end the experiment session
+end
+clear cancelled;
+
+% Initialize the user interface (ui) and PsychToolbox
+ui = UserInterface(settings);
+
+% Use the ui to show experiment instructions
+ui.ShowInstructions();
+
+% Use the ui to show the "ready" screen with a timer, and wait for the MRI
+% trigger (or a key press, depending on what is specified in
+% ExperimentSettings.m)
+triggerTimestamp = ui.ShowReadyTrigger();
+
+% Use the ui to show a fixation cross for the specified amount of time in
+% seconds
+ui.ShowFixation(0.5, runningVals);
+
+% Condition and stim names (these could be put in a sub function???)
 cond_names = {'win','disp','lose','relief','amb-win','amb-lose','neutral'};
 exp_cues = {'ExpWin.jpg','ExpLoss.jpg','ExpAmb.jpg','ExpNeut.jpg'};
 win_cues = [obj.Win1,obj.Win2,obj.Win3,obj.Win4,obj.Win6,obj.Win7,obj.Win8,obj.Win9];
 loss_cues = [obj.Loss1,obj.Loss2,obj.Loss3,obj.Loss4,obj.Loss6,obj.Loss7,obj.Loss8,obj.Loss9];
 
-
-
+% After trigger wait for x seconds
 trigger = GetSecs
 tic
 WaitSecs(6)

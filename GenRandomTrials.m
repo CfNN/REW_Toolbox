@@ -29,7 +29,8 @@ sequence = cond_names([trials.ProcedureNum]);
 [trials.Procedure] = sequence{:};
 
 % Set up fields for data logging, set to default values for all trials 
-% (typically NaN or 'Not a Number')
+% (typically NaN or 'Not a Number', or "False" for booleans)
+trials = setdefault(trials, 'ExpectancyStimulus', NaN);
 trials = setdefault(trials, 'BetOnsetTimestamp', NaN);
 trials = setdefault(trials, 'ResponseTimestamp', NaN);
 trials = setdefault(trials, 'BetRT', NaN);
@@ -40,7 +41,7 @@ trials = setdefault(trials, 'Fix1Dur', NaN);
 trials = setdefault(trials, 'ExpOnsetTimestamp', NaN);
 trials = setdefault(trials, 'Fix2OnsetTimestamp', NaN);
 trials = setdefault(trials, 'Fix2Dur', NaN);
-trials = setdefault(trials, 'Feed', NaN);
+trials = setdefault(trials, 'FeedStimulus', NaN);
 trials = setdefault(trials, 'FeedCueOnsetTimestamp', NaN);
 trials = setdefault(trials, 'Fix3OnsetTimestamp', NaN);
 trials = setdefault(trials, 'Fix3Dur', NaN);

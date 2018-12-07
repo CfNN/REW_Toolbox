@@ -25,6 +25,7 @@ keyMap('2@') = 2;
 
 % Display the bet cue
 Screen('DrawTexture', obj.window, obj.choice, []);
+obj.DrawPerformanceMetrics(runningVals);
 [~, BetCueOn, ~, ~, ~] = Screen('Flip',obj.window); % GetSecs called internally for timestamp
 trials(runningVals.currentTrial).BetOnsetTimestamp = BetCueOn;
 
@@ -55,17 +56,20 @@ while ~timedout
     end
 end
 
+% Update the live performance metrics that are optionally displayed on
+% the screen (see ExperimentSettings.m to disable/enable)
+runningVals = obj.UpdateLivePerfMetrics(runningVals, trials);
+
 % Show choice screen
 if trials(runningVals.currentTrial).Answer == 1
-    disp('One');
     Screen('DrawTexture', obj.window, obj.lower, []);
+    obj.DrawPerformanceMetrics(runningVals);
     [~, trials(runningVals.currentTrial).RespCueOn, ~, ~, ~] = Screen('Flip',obj.window);
 elseif trials(runningVals.currentTrial).Answer == 2
-    disp('Two');
     Screen('DrawTexture', obj.window, obj.higher, []);
+    obj.DrawPerformanceMetrics(runningVals);
     [~, trials(runningVals.currentTrial).RespCueOn, ~, ~, ~] = Screen('Flip',obj.window);
 else    % Need to make sure kbcheck is empty prior to if clause or there will be errors
-    disp(['Other: ' num2str(trials(runningVals.currentTrial).Answer)]);
 end
 
 % Display choice until 3 seconds was up.
@@ -77,23 +81,27 @@ trials(runningVals.currentTrial).Fix1Dur = random(truncate(makedist('Exponential
 
 % Display expectancy cue (determined by the trial type) and log onset time.
 if trials(runningVals.currentTrial).ProcedureNum < 3
-    trials(runningVals.currentTrial).Stimulus = obj.exp_cues{1};
+    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{1};
     Screen('DrawTexture', obj.window, obj.ExpWin, []);
+    obj.DrawPerformanceMetrics(runningVals);
     [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window); % GetSecs called internally for timestamp
 
 elseif trials(runningVals.currentTrial).ProcedureNum > 2 && trials(runningVals.currentTrial).ProcedureNum < 5
-    trials(runningVals.currentTrial).Stimulus = obj.exp_cues{2};
+    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{2};
     Screen('DrawTexture', obj.window, obj.ExpLoss, []);
+    obj.DrawPerformanceMetrics(runningVals);
     [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 
 elseif trials(runningVals.currentTrial).ProcedureNum > 4 && trials(runningVals.currentTrial).ProcedureNum < 7
-    trials(runningVals.currentTrial).Stimulus = obj.exp_cues{3};
+    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{3};
     Screen('DrawTexture', obj.window, obj.ExpAmb, []);
+    obj.DrawPerformanceMetrics(runningVals);
     [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 
 elseif trials(runningVals.currentTrial).ProcedureNum > 6
-    trials(runningVals.currentTrial).Stimulus = obj.exp_cues{4};
+    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{4};
     Screen('DrawTexture', obj.window, obj.ExpNeut, []);
+    obj.DrawPerformanceMetrics(runningVals);
     [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 end
 
@@ -104,33 +112,36 @@ WaitSecs(settings.ExpDur);
 trials(runningVals.currentTrial).Fix2Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));
 [trials(runningVals.currentTrial).Fix2OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix2Dur, runningVals);
 
-% Display outcome (determined by cond + Answer) 
+% Determine the outcome/"feed" cue to be used and log the cue name
 if (trials(runningVals.currentTrial).ProcedureNum == 1 || trials(runningVals.currentTrial).ProcedureNum == 5) && trials(runningVals.currentTrial).Answer == 1    %Expected win or amb win
-    trials(runningVals.currentTrial).Feed = obj.win_cues{1,randsample(1:4,1)};
-    Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
+    cueNum = randsample(1:4,1);
+    feedCue = obj.win_cues{cueNum};
+    trials(runningVals.currentTrial).FeedStimulus = obj.win_cue_names{cueNum};
 
 elseif (trials(runningVals.currentTrial).ProcedureNum == 1 || trials(runningVals.currentTrial).ProcedureNum == 5) && trials(runningVals.currentTrial).Answer == 2
-    trials(runningVals.currentTrial).Feed = obj.win_cues{1,randsample(6:9,1)};
-    Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
+    cueNum = randsample(6:9,1);
+    feedCue = obj.win_cues{cueNum};
+    trials(runningVals.currentTrial).FeedStimulus = obj.win_cue_names{cueNum};
 
 elseif (trials(runningVals.currentTrial).ProcedureNum == 3 || trials(runningVals.currentTrial).ProcedureNum == 6) && trials(runningVals.currentTrial).Answer == 1    %Expected loss or amb loss
-    trials(runningVals.currentTrial).Feed = obj.loss_cues{1,randsample(1:4,1)};
-    Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
+    cueNum = randsample(1:4,1);
+    feedCue = obj.loss_cues{cueNum};
+    trials(runningVals.currentTrial).FeedStimulus = obj.loss_cue_names{cueNum};
 
 elseif (trials(runningVals.currentTrial).ProcedureNum == 3 || trials(runningVals.currentTrial).ProcedureNum == 6) && trials(runningVals.currentTrial).Answer == 2
-    trials(runningVals.currentTrial).Feed = obj.loss_cues{1,randsample(6:9,1)};
-    Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
+    cueNum = randsample(6:9,1);
+    feedCue = obj.loss_cues{cueNum};
+    trials(runningVals.currentTrial).FeedStimulus = obj.loss_cue_names{cueNum};
 
 else
-    trials(runningVals.currentTrial).Feed = obj.Neut;
-    Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
+    feedCue = obj.Neut;
+    trials(runningVals.currentTrial).FeedStimulus = 'Neut.jpg';
 end
 
+% Display the outcome/feed cue
+Screen('DrawTexture', obj.window, feedCue, []);
+obj.DrawPerformanceMetrics(runningVals);
+[~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 WaitSecs(settings.FeedDur);
     
 % Inter-trial interval (ITI)

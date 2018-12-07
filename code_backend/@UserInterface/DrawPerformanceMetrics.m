@@ -10,17 +10,14 @@ function DrawPerformanceMetrics(obj, runningVals)
 
 if obj.settings.DisplayPerfMetrics == true
     
-    perfMetrics = [
-        'Go Acc: ' num2str(runningVals.GoAcc) '%    Last go trial RT: ' num2str(round(runningVals.LastGoRT*1000)) 'ms' '\n\n',...
-        'Stop success %: ' num2str(runningVals.StopAcc) '%    SSD1: ' num2str(round(runningVals.ssd1*1000)) 'ms    SSD2: ' num2str(round(runningVals.ssd2*1000)) 'ms'
-        ];
-    
+    perfMetrics = ['Response rate: ' num2str(runningVals.ResponseRate) '%    Last response: ' num2str(runningVals.PreviousAnswer)];
+        
     Screen('TextSize', obj.window, 18);
     Screen('TextFont', obj.window, 'Courier New');
     Screen('TextSTyle', obj.window, 0); % 0 is regular (not bold, italicized, etc)
-    % Change the value in "obj.screenYpixels - 50" to modify the vertical
+    % Change the value in "obj.screenYpixels - 20" to modify the vertical
     % position of the performance metrics.
-    DrawFormattedText(obj.window, perfMetrics, 'center', obj.screenYpixels - 50, obj.c_white);
+    DrawFormattedText(obj.window, perfMetrics, 'center', obj.screenYpixels - 20, obj.c_white);
 end
 
 end

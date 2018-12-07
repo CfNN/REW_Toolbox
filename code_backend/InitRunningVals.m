@@ -5,3 +5,7 @@
 
 % Variable for keeping track of the trial number
 runningVals.currentTrial = 1;
+
+% Variables for keeping track of live performance metrics: 
+runningVals.ResponseRate = -1; % Meaningless default value
+runningVals.PreviousAnswer = -1; % Meaningless default value

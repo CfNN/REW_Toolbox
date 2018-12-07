@@ -43,9 +43,11 @@ classdef UserInterface < handle
         Win9;
         
         % Figure reference lists
-        exp_cues;
+        exp_cue_names;
         win_cues;
+        win_cue_names;
         loss_cues;
+        loss_cue_names;
     end
         
     properties % public access
@@ -109,7 +111,6 @@ classdef UserInterface < handle
             % For help see: help RectCenter
             [obj.xCenter, obj.yCenter] = RectCenter(obj.windowRect);
             
-            
             %---IMAGE SETUP---%
             choiceFig = imread('images/choice.jpg');
             higherFig = imread('images/higher.jpg');
@@ -163,10 +164,11 @@ classdef UserInterface < handle
             obj.Win8 = Screen('MakeTexture', obj.window, Win8Fig);
             obj.Win9 = Screen('MakeTexture', obj.window, Win9Fig);
             
-            obj.exp_cues = {'ExpWin.jpg','ExpLoss.jpg','ExpAmb.jpg','ExpNeut.jpg'};
+            obj.exp_cue_names = {'ExpWin.jpg','ExpLoss.jpg','ExpAmb.jpg','ExpNeut.jpg'};
             obj.win_cues = {obj.Win1,obj.Win2,obj.Win3,obj.Win4, NaN, obj.Win6,obj.Win7,obj.Win8,obj.Win9};
+            obj.win_cue_names = {'Win1.jpg', 'Win2.jpg', 'Win3.jpg', 'Win4.jpg', NaN, 'Win6.jpg', 'Win7.jpg', 'Win8.jpg', 'Win9.jpg'};
             obj.loss_cues = {obj.Loss1,obj.Loss2,obj.Loss3,obj.Loss4, NaN, obj.Loss6,obj.Loss7,obj.Loss8,obj.Loss9};
-            
+            obj.loss_cue_names = {'Loss1.jpg', 'Loss2.jpg', 'Loss3.jpg', 'Loss4.jpg', NaN, 'Loss6.jpg', 'Loss7.jpg', 'Loss8.jpg', 'Loss9.jpg'};
         end
         
         ShowInstructions(obj);
@@ -180,6 +182,7 @@ classdef UserInterface < handle
     end
     
     methods (Access = private)
+        runningVals = UpdateLivePerfMetrics(obj, runningVals, trials);
         DrawPerformanceMetrics(obj, runningVals);
     end
 end

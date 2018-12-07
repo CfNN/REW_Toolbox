@@ -11,8 +11,8 @@ settings.ExperimentName = 'REW';
 settings.UseMRITrigger = false;
 
 % Set to "true" to display live performance metrics at the bottom of the 
-% "Blank" screen during the experiment. To hide metrics, set to "false"
-settings.DisplayPerfMetrics = false;
+% screen during the experiment. To hide the metrics, set to "false"
+settings.DisplayPerfMetrics = true;
 
 % Set to "true" to use a variable fixation cross duration, chosen for each
 % trial from a truncated exponential distribution. Set to "false" to use a

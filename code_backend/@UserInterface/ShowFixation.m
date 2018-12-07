@@ -4,7 +4,7 @@ function [onsetTimestamp, offsetTimestamp] = ShowFixation(obj, duration, running
 
 Screen('DrawTexture', obj.window, obj.fixation, []);
 
-% obj.DrawPerformanceMetrics(runningVals);
+obj.DrawPerformanceMetrics(runningVals);
 
 [~, onsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 

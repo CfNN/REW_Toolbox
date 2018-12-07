@@ -65,7 +65,6 @@ while (runningVals.currentTrial <= length(trials))
     if quitKeyPressed
         % Clear the screen and unneeded variables
         sca;
-        PsychPortAudio('Close');
         clear ui filename;
         % Stop this script from running to end experiment session
         return;
@@ -88,21 +87,3 @@ clear ui filename;
 % Save the data to a .mat, delete autosaved version
 save(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '.mat'], 'trials', 'settings', 'subjectNumber', 'sessionNumber', 'subjectHandedness', 'triggerTimestamp', 'sessionStartDateTime', 'sessionStartFixationOnsetTimestamp', 'sessionStartFixationOffsetTimestamp', 'sessionEndFixationOnsetTimestamp', 'sessionEndFixationOffsetTimestamp');
 delete(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '_AUTOSAVE.mat']);
-
-
-% conds=[trials1(:).cond];
-% dlmwrite('win.txt',[trials1(find(conds==1)).ExpOnsetTimestamp]');
-% dlmwrite('disp.txt',[trials1(find(conds==2)).ExpOnsetTimestamp]');
-% dlmwrite('lose.txt',[trials1(find(conds==3)).ExpOnsetTimestamp]');
-% dlmwrite('relief.txt',[trials1(find(conds==4)).ExpOnsetTimestamp]');
-% dlmwrite('ambwin.txt',[trials1(find(conds==5)).ExpOnsetTimestamp]');
-% dlmwrite('amblose.txt',[trials1(find(conds==6)).ExpOnsetTimestamp]');
-% dlmwrite('neutral.txt',[trials1(find(conds==7)).ExpOnsetTimestamp]');
-% 
-% dlmwrite('winF.txt',[trials1(find(conds==1)).FeedOnsetTimestamp]');
-% dlmwrite('dispF.txt',[trials1(find(conds==2)).FeedOnsetTimestamp]');
-% dlmwrite('loseF.txt',[trials1(find(conds==3)).FeedOnsetTimestamp]');
-% dlmwrite('reliefF.txt',[trials1(find(conds==4)).FeedOnsetTimestamp]');
-% dlmwrite('ambwinF.txt',[trials1(find(conds==5)).FeedOnsetTimestamp]');
-% dlmwrite('ambloseF.txt',[trials1(find(conds==6)).FeedOnsetTimestamp]');
-% dlmwrite('neutralF.txt',[trials1(find(conds==7)).FeedOnsetTimestamp]');

@@ -42,6 +42,14 @@ classdef UserInterface < handle
         Win8;
         Win9;
         
+        % Figure reference lists
+        exp_cues;
+        win_cues;
+        loss_cues;
+    end
+        
+    properties % public access
+        
     end
     
     properties(Constant)
@@ -72,6 +80,13 @@ classdef UserInterface < handle
             
             %---SCREEN SETUP---%
             
+            % Skip sync checks if running on Windows or Mac. Running on Windows 
+            % or Mac (as opposed to Linux) may cause stimulus timing errors 
+            % of up to a few milliseconds.
+            if contains(upper(computer), 'MAC') || contains(upper(computer), 'WIN')
+                Screen('Preference', 'SkipSyncTests', 1);
+            end
+            
             % Get the screen numbers
             screens = Screen('Screens');
             
@@ -96,31 +111,31 @@ classdef UserInterface < handle
             
             
             %---IMAGE SETUP---%
-            choiceFig = double(imread('pics/choice.jpg'));
-            higherFig = double(imread('pics/higher.jpg'));
-            lowerFig = double(imread('pics/lower.jpg'));
-            fixFig = double(imread('pics/fixation.jpg'));
-            ExpWinFig = double(imread('pics/ExpWin.jpg'));
-            ExpLossFig = double(imread('pics/ExpLoss.jpg'));
-            ExpAmbFig = double(imread('pics/ExpAmb.jpg'));
-            ExpNeutFig = double(imread('pics/ExpNeut.jpg'));
-            Loss1Fig = double(imread('pics/Loss1.jpg'));
-            Loss2Fig = double(imread('pics/Loss2.jpg'));
-            Loss3Fig = double(imread('pics/Loss3.jpg'));
-            Loss4Fig = double(imread('pics/Loss4.jpg'));
-            Loss6Fig = double(imread('pics/Loss6.jpg'));
-            Loss7Fig = double(imread('pics/Loss7.jpg'));
-            Loss8Fig = double(imread('pics/Loss8.jpg'));
-            Loss9Fig = double(imread('pics/Loss9.jpg'));
-            NeutFig = double(imread('pics/Neut.jpg'));
-            Win1Fig = double(imread('pics/Win1.jpg'));
-            Win2Fig = double(imread('pics/Win2.jpg'));
-            Win3Fig = double(imread('pics/Win3.jpg'));
-            Win4Fig = double(imread('pics/Win4.jpg'));
-            Win6Fig = double(imread('pics/Win6.jpg'));
-            Win7Fig = double(imread('pics/Win7.jpg'));
-            Win8Fig = double(imread('pics/Win8.jpg'));
-            Win9Fig = double(imread('pics/Win9.jpg'));
+            choiceFig = imread('images/choice.jpg');
+            higherFig = imread('images/higher.jpg');
+            lowerFig = imread('images/lower.jpg');
+            fixFig = imread('images/fixation.jpg');
+            ExpWinFig = imread('images/ExpWin.jpg');
+            ExpLossFig = imread('images/ExpLoss.jpg');
+            ExpAmbFig = imread('images/ExpAmb.jpg');
+            ExpNeutFig = imread('images/ExpNeut.jpg');
+            Loss1Fig = imread('images/Loss1.jpg');
+            Loss2Fig = imread('images/Loss2.jpg');
+            Loss3Fig = imread('images/Loss3.jpg');
+            Loss4Fig = imread('images/Loss4.jpg');
+            Loss6Fig = imread('images/Loss6.jpg');
+            Loss7Fig = imread('images/Loss7.jpg');
+            Loss8Fig = imread('images/Loss8.jpg');
+            Loss9Fig = imread('images/Loss9.jpg');
+            NeutFig = imread('images/Neut.jpg');
+            Win1Fig = imread('images/Win1.jpg');
+            Win2Fig = imread('images/Win2.jpg');
+            Win3Fig = imread('images/Win3.jpg');
+            Win4Fig = imread('images/Win4.jpg');
+            Win6Fig = imread('images/Win6.jpg');
+            Win7Fig = imread('images/Win7.jpg');
+            Win8Fig = imread('images/Win8.jpg');
+            Win9Fig = imread('images/Win9.jpg');
             
             obj.choice = Screen('MakeTexture', obj.window, choiceFig);
             obj.higher = Screen('MakeTexture', obj.window, higherFig);
@@ -148,19 +163,21 @@ classdef UserInterface < handle
             obj.Win8 = Screen('MakeTexture', obj.window, Win8Fig);
             obj.Win9 = Screen('MakeTexture', obj.window, Win9Fig);
             
+            obj.exp_cues = {'ExpWin.jpg','ExpLoss.jpg','ExpAmb.jpg','ExpNeut.jpg'};
+            obj.win_cues = {obj.Win1,obj.Win2,obj.Win3,obj.Win4, NaN, obj.Win6,obj.Win7,obj.Win8,obj.Win9};
+            obj.loss_cues = {obj.Loss1,obj.Loss2,obj.Loss3,obj.Loss4, NaN, obj.Loss6,obj.Loss7,obj.Loss8,obj.Loss9};
+            
         end
-        
-        
         
         ShowInstructions(obj);
         
-        TriggerTimestamp = ShowReadyTrigger(obj);
+        [triggerTimestamp, sessionStartDateTime] = ShowReadyTrigger(obj);
         
         trials = ShowFixation(obj, duration, runningVals, trials);
         
         trials = ShowBlank(obj, duration, runningVals, trials);
         
-        [trials, runningVals] = RunNextTrial(obj, trials, settings, runningVals);
+        [trials, runningVals, quitKeyPressed] = RunNextTrial(obj, trials, settings, runningVals);
         
     end
     

@@ -45,16 +45,5 @@ settings.BetDur = 3;
 % Total RE duration.
 settings.ExpDur = 2;
 
-% CLEANUP (removing redundant and confusing settings variables)
-
-if settings.VariableFixationDur
-    % Remove constant fixation duration setting if a variable fixation
-    % duration has been indicated
-    settings = rmfield(settings,'FixationDur');
-else
-    % If variable fixation duration has not been indicated, remove settings
-    % for fixation duration distribution parameters
-    settings = rmfield(settings, 'FixDurMean');
-    settings = rmfield(settings, 'FixDurMin');
-    settings = rmfield(settings, 'FixDurMax');
-end
+% Outcome screen duration
+settings.FeedDur = 1;

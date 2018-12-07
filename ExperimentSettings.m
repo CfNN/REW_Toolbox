@@ -35,6 +35,11 @@ settings.FixDurMax = 2.5;
 % NOT APPLICABLE if settings.VariableFixationDur is set to true
 settings.FixDur = 0.5; % seconds
 
+% Duration to display fixation cross before and after running the trials
+% (e.g. to collect 'resting' data and avoid truncating HRF in MRI studies)
+settings.SessionStartFixationDur = 6; % seconds
+settings.SessionEndFixationDur = 6; % seconds
+
 %Set variables called by counterbalance
 settings.nconds = 7;
 settings.nblocks = 6;

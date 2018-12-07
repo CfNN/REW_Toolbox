@@ -72,10 +72,8 @@ end
 WaitSecs(settings.BetDur-((trials(runningVals.currentTrial).ResponseTimestamp-trials(runningVals.currentTrial).BetOnsetTimestamp)/1000));
 
 % First jittered fixation
-Screen('DrawTexture', obj.window, obj.fixation, []);
-[~, trials(runningVals.currentTrial).Fix1OnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 trials(runningVals.currentTrial).Fix1Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));
-WaitSecs(trials(runningVals.currentTrial).Fix1Dur);
+[trials(runningVals.currentTrial).Fix1OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix1Dur, runningVals);
 
 % Display expectancy cue (determined by the trial type) and log onset time.
 if trials(runningVals.currentTrial).ProcedureNum < 3
@@ -100,49 +98,44 @@ elseif trials(runningVals.currentTrial).ProcedureNum > 6
 end
 
 % Expectancy duaration
-trials(runningVals.currentTrial).ExpDur = 2;
-WaitSecs(trials(runningVals.currentTrial).ExpDur);
+WaitSecs(settings.ExpDur);
 
 % Second jittered fixation
-Screen('DrawTexture', obj.window, obj.fixation, []);
-[~, trials(runningVals.currentTrial).Fix2OnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 trials(runningVals.currentTrial).Fix2Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));
-WaitSecs(trials(runningVals.currentTrial).Fix2Dur);
+[trials(runningVals.currentTrial).Fix2OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix2Dur, runningVals);
 
 % Display outcome (determined by cond + Answer) 
 if (trials(runningVals.currentTrial).ProcedureNum == 1 || trials(runningVals.currentTrial).ProcedureNum == 5) && trials(runningVals.currentTrial).Answer == 1    %Expected win or amb win
     trials(runningVals.currentTrial).Feed = obj.win_cues{1,randsample(1:4,1)};
     Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOn, ~, ~, ~] = Screen('Flip',obj.window);
+    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 
 elseif (trials(runningVals.currentTrial).ProcedureNum == 1 || trials(runningVals.currentTrial).ProcedureNum == 5) && trials(runningVals.currentTrial).Answer == 2
     trials(runningVals.currentTrial).Feed = obj.win_cues{1,randsample(6:9,1)};
     Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOn, ~, ~, ~] = Screen('Flip',obj.window);
+    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 
 elseif (trials(runningVals.currentTrial).ProcedureNum == 3 || trials(runningVals.currentTrial).ProcedureNum == 6) && trials(runningVals.currentTrial).Answer == 1    %Expected loss or amb loss
     trials(runningVals.currentTrial).Feed = obj.loss_cues{1,randsample(1:4,1)};
     Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOn, ~, ~, ~] = Screen('Flip',obj.window);
+    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 
 elseif (trials(runningVals.currentTrial).ProcedureNum == 3 || trials(runningVals.currentTrial).ProcedureNum == 6) && trials(runningVals.currentTrial).Answer == 2
     trials(runningVals.currentTrial).Feed = obj.loss_cues{1,randsample(6:9,1)};
     Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOn, ~, ~, ~] = Screen('Flip',obj.window);
+    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 
 else
     trials(runningVals.currentTrial).Feed = obj.Neut;
     Screen('DrawTexture', obj.window, trials(runningVals.currentTrial).Feed, []);
-    [~, trials(runningVals.currentTrial).FeedCueOn, ~, ~, ~] = Screen('Flip',obj.window);
+    [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 end
 
 WaitSecs(settings.FeedDur);
     
-% ITI
-trials(runningVals.currentTrial).Fix3OnsetTimestamp = GetSecs;
+% Inter-trial interval (ITI)
 trials(runningVals.currentTrial).Fix3Dur = random(truncate(makedist('Exponential',settings.FixDurMean),settings.FixDurMin,settings.FixDurMax));
-WaitSecs(trials(runningVals.currentTrial).Fix3Dur);
-
+[trials(runningVals.currentTrial).Fix3OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix3Dur, runningVals);
 
 % Re-enable all keys (restricted during trial)
 RestrictKeysForKbCheck([]);

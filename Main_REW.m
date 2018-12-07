@@ -53,14 +53,8 @@ ui.ShowInstructions();
 % important calculations if possible. 
 [triggerTimestamp, sessionStartDateTime] = ui.ShowReadyTrigger();
 
-% Use the ui to show a fixation cross for the specified amount of time in
-% seconds
-% ui.ShowFixation(0.5, runningVals);
-
-% After trigger wait for x seconds
-trigger = GetSecs;
-tic
-WaitSecs(6)
+% Use the ui to show a fixation cross for the specified amount of time in seconds
+[sessionStartFixationOnsetTimestamp, sessionStartFixationOffsetTimestamp] = ui.ShowFixation(settings.SessionStartFixationDur, runningVals);
 
 % Loop through the trials structure (note - runningVals.currentTrial keeps
 % track of which trial you are on)
@@ -78,36 +72,23 @@ while (runningVals.currentTrial <= length(trials))
     end
 
     % Autosave data in case the experiment is interrupted partway through
-    save(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '_AUTOSAVE.mat'], 'trials', 'settings', 'subjectNumber', 'sessionNumber', 'subjectHandedness', 'triggerTimestamp', 'sessionStartDateTime');
+    save(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '_AUTOSAVE.mat'], 'trials', 'settings', 'subjectNumber', 'sessionNumber', 'subjectHandedness', 'triggerTimestamp', 'sessionStartDateTime', 'sessionStartFixationOnsetTimestamp', 'sessionStartFixationOffsetTimestamp');
 
     % Advance iterator to next trial
     runningVals.currentTrial = runningVals.currentTrial + 1;
 
 end  
     
-WaitSecs(6)
-toc
-    
-studytime = GetSecs-trigger
+[sessionEndFixationOnsetTimestamp, sessionEndFixationOffsetTimestamp] = ui.ShowFixation(settings.SessionEndFixationDur, runningVals);
 
 % Clear the screen and unneeded variables.
 sca;
 clear ui filename;
 
 % Save the data to a .mat, delete autosaved version
-save(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '.mat'], 'trials', 'settings', 'subjectNumber', 'sessionNumber', 'subjectHandedness', 'triggerTimestamp', 'sessionStartDateTime');
+save(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '.mat'], 'trials', 'settings', 'subjectNumber', 'sessionNumber', 'subjectHandedness', 'triggerTimestamp', 'sessionStartDateTime', 'sessionStartFixationOnsetTimestamp', 'sessionStartFixationOffsetTimestamp', 'sessionEndFixationOnsetTimestamp', 'sessionEndFixationOffsetTimestamp');
 delete(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '_AUTOSAVE.mat']);
 
-% trials1=trials;
-% for i = 1:(n*n_block)
-%     trials1(runningVals.currentTrial).BetOnsetTimestamp=trials1(runningVals.currentTrial).BetOnsetTimestamp-trigger;
-%     trials1(runningVals.currentTrial).Fix1OnsetTimestamp=trials1(runningVals.currentTrial).Fix1OnsetTimestamp-trigger;
-%     trials1(runningVals.currentTrial).ExpOnsetTimestamp=trials1(runningVals.currentTrial).ExpOnsetTimestamp-trigger;
-%     trials1(runningVals.currentTrial).Fix2OnsetTimestamp=trials1(runningVals.currentTrial).Fix2OnsetTimestamp-trigger;
-%     trials1(runningVals.currentTrial).NumOnsetTimestamp=trials1(runningVals.currentTrial).NumOnsetTimestamp-trigger;
-%     trials1(runningVals.currentTrial).FeedOnsetTimestamp=trials1(runningVals.currentTrial).FeedOnsetTimestamp-trigger;
-%     trials1(runningVals.currentTrial).Fix3OnsetTimestamp=trials1(runningVals.currentTrial).Fix3OnsetTimestamp-trigger;
-% end
 
 % conds=[trials1(:).cond];
 % dlmwrite('win.txt',[trials1(find(conds==1)).ExpOnsetTimestamp]');

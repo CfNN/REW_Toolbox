@@ -1,7 +1,5 @@
-function GenRandomTrials(n_conditions, n_block)
+function GenRandomTrials(n_block)
 % GENRANDOMTRIALS - Generates a pseudo-random trial sequence. 
-% n_conditions: Number of conditions. 
-%
 % n_block: Number of blocks of trials.
 
 
@@ -9,7 +7,8 @@ function GenRandomTrials(n_conditions, n_block)
 % of numbers will be generated each time after opening MATLAB.
 rng('shuffle');
 
-n_conditions = n_conditions + 1;  % Adjusted to account for overrepresentation of 'neutral'
+% There are 8 conditions in this task
+n_conditions = 8;
 
 % Set up the counterbalance
 addpath('./code_backend/'); % add counterbalance function to MATLAB path
@@ -37,7 +36,7 @@ trials = setdefault(trials, 'BetRT', NaN);
 trials = setdefault(trials, 'Answer', NaN);
 trials = setdefault(trials, 'RespCueOn', NaN);
 trials = setdefault(trials, 'Fix1OnsetTimestamp', NaN);
-trials = setdefault(trials, 'Fix2Dur', NaN);
+trials = setdefault(trials, 'Fix1Dur', NaN);
 trials = setdefault(trials, 'ExpOnsetTimestamp', NaN);
 trials = setdefault(trials, 'Fix2OnsetTimestamp', NaN);
 trials = setdefault(trials, 'Fix2Dur', NaN);

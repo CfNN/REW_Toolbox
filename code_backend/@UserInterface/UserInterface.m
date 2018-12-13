@@ -48,6 +48,7 @@ classdef UserInterface < handle
         win_cue_names;
         loss_cues;
         loss_cue_names;
+        neut_cue_name;
     end
         
     properties % public access
@@ -65,6 +66,9 @@ classdef UserInterface < handle
         function obj = UserInterface(settings_init)
             
             obj.settings = settings_init;
+            
+            % Seed random number generator
+            rng('shuffle');
             
             % Call some default settings for setting up Psychtoolbox
             PsychDefaultSetup(2);
@@ -169,6 +173,7 @@ classdef UserInterface < handle
             obj.win_cue_names = {'Win1.jpg', 'Win2.jpg', 'Win3.jpg', 'Win4.jpg', NaN, 'Win6.jpg', 'Win7.jpg', 'Win8.jpg', 'Win9.jpg'};
             obj.loss_cues = {obj.Loss1,obj.Loss2,obj.Loss3,obj.Loss4, NaN, obj.Loss6,obj.Loss7,obj.Loss8,obj.Loss9};
             obj.loss_cue_names = {'Loss1.jpg', 'Loss2.jpg', 'Loss3.jpg', 'Loss4.jpg', NaN, 'Loss6.jpg', 'Loss7.jpg', 'Loss8.jpg', 'Loss9.jpg'};
+            obj.neut_cue_name = 'Neut.jpg';
         end
         
         ShowInstructions(obj);

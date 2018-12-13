@@ -1,11 +1,12 @@
 function [trials, runningVals, quitKeyPressed] = RunNextTrial(obj, trials, settings, runningVals)
 % RUNNEXTTRIAL - Run the next trial in the session, based on the current
 % trial number (runningVals.currentTrial) and the data in the 'trials'
-% struct array. Returns updated copies of 'trials' and 'runningVals'. This
-% function also takes care of all timestamping and data logging within each
-% trial.
+% struct array. Returns updated copies of 'trials' and 'runningVals', as 
+% well as a boolean 'quitKeyPressed' indicating whether a quit key was
+% pressed to end the experiment session. This function also takes care of 
+% all timestamping and data logging within each trial.
 %
-% Usage: [trials, runningVals] = RunNextTrial(trials, runningVals);
+% Usage: [trials, runningVals, quitKeyPressed] = RunNextTrial(trials, settings, runningVals);
 % -------------------
 
 % If the escape or q key is pressed, this will be set to true and passed as 
@@ -60,7 +61,7 @@ end
 % the screen (see ExperimentSettings.m to disable/enable)
 runningVals = obj.UpdateLivePerfMetrics(runningVals, trials);
 
-% Show choice screen
+% Display the choice cue
 if trials(runningVals.currentTrial).Answer == 1
     Screen('DrawTexture', obj.window, obj.lower, []);
     obj.DrawPerformanceMetrics(runningVals);
@@ -69,7 +70,6 @@ elseif trials(runningVals.currentTrial).Answer == 2
     Screen('DrawTexture', obj.window, obj.higher, []);
     obj.DrawPerformanceMetrics(runningVals);
     [~, trials(runningVals.currentTrial).RespCueOn, ~, ~, ~] = Screen('Flip',obj.window);
-else    % Need to make sure kbcheck is empty prior to if clause or there will be errors
 end
 
 % Display choice until 3 seconds was up.
@@ -79,31 +79,32 @@ WaitSecs(settings.BetDur-((trials(runningVals.currentTrial).ResponseTimestamp-tr
 trials(runningVals.currentTrial).Fix1Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));
 [trials(runningVals.currentTrial).Fix1OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix1Dur, runningVals);
 
-% Display expectancy cue (determined by the trial type) and log onset time.
-if trials(runningVals.currentTrial).ProcedureNum < 3
-    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{1};
-    Screen('DrawTexture', obj.window, obj.ExpWin, []);
-    obj.DrawPerformanceMetrics(runningVals);
-    [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window); % GetSecs called internally for timestamp
-
-elseif trials(runningVals.currentTrial).ProcedureNum > 2 && trials(runningVals.currentTrial).ProcedureNum < 5
-    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{2};
-    Screen('DrawTexture', obj.window, obj.ExpLoss, []);
-    obj.DrawPerformanceMetrics(runningVals);
-    [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
-
-elseif trials(runningVals.currentTrial).ProcedureNum > 4 && trials(runningVals.currentTrial).ProcedureNum < 7
-    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{3};
-    Screen('DrawTexture', obj.window, obj.ExpAmb, []);
-    obj.DrawPerformanceMetrics(runningVals);
-    [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
-
-elseif trials(runningVals.currentTrial).ProcedureNum > 6
-    trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{4};
-    Screen('DrawTexture', obj.window, obj.ExpNeut, []);
-    obj.DrawPerformanceMetrics(runningVals);
-    [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
+% Choose expectancy cue based on procedure name
+switch trials(runningVals.currentTrial).Procedure
+    case {'win', 'disp'}
+        expCue = obj.ExpWin;
+        trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{1};
+        
+    case {'lose', 'relief'}
+        expCue = obj.ExpLoss;
+        trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{2};
+        
+    case {'amb-win', 'amb-lose'}
+        expCue = obj.ExpAmb;
+        trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{3};
+        
+    case {'neutral'}
+        expCue = obj.ExpNeut;
+        trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{4};
+        
+    otherwise
+        error('Invalid procedure name');
 end
+
+% Display expectancy cue, log onset time
+Screen('DrawTexture', obj.window, expCue, []);
+obj.DrawPerformanceMetrics(runningVals);
+[~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window); % GetSecs called internally for timestamp
 
 % Expectancy duaration
 WaitSecs(settings.ExpDur);
@@ -112,30 +113,41 @@ WaitSecs(settings.ExpDur);
 trials(runningVals.currentTrial).Fix2Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));
 [trials(runningVals.currentTrial).Fix2OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix2Dur, runningVals);
 
-% Determine the outcome/"feed" cue to be used and log the cue name
-if (trials(runningVals.currentTrial).ProcedureNum == 1 || trials(runningVals.currentTrial).ProcedureNum == 5) && trials(runningVals.currentTrial).Answer == 1    %Expected win or amb win
-    cueNum = randsample(1:4,1);
-    feedCue = obj.win_cues{cueNum};
-    trials(runningVals.currentTrial).FeedStimulus = obj.win_cue_names{cueNum};
-
-elseif (trials(runningVals.currentTrial).ProcedureNum == 1 || trials(runningVals.currentTrial).ProcedureNum == 5) && trials(runningVals.currentTrial).Answer == 2
-    cueNum = randsample(6:9,1);
-    feedCue = obj.win_cues{cueNum};
-    trials(runningVals.currentTrial).FeedStimulus = obj.win_cue_names{cueNum};
-
-elseif (trials(runningVals.currentTrial).ProcedureNum == 3 || trials(runningVals.currentTrial).ProcedureNum == 6) && trials(runningVals.currentTrial).Answer == 1    %Expected loss or amb loss
-    cueNum = randsample(1:4,1);
-    feedCue = obj.loss_cues{cueNum};
-    trials(runningVals.currentTrial).FeedStimulus = obj.loss_cue_names{cueNum};
-
-elseif (trials(runningVals.currentTrial).ProcedureNum == 3 || trials(runningVals.currentTrial).ProcedureNum == 6) && trials(runningVals.currentTrial).Answer == 2
-    cueNum = randsample(6:9,1);
-    feedCue = obj.loss_cues{cueNum};
-    trials(runningVals.currentTrial).FeedStimulus = obj.loss_cue_names{cueNum};
-
-else
-    feedCue = obj.Neut;
-    trials(runningVals.currentTrial).FeedStimulus = 'Neut.jpg';
+% Determine the outcome/"feed" cue to be used and log the feed cue name
+switch trials(runningVals.currentTrial).Procedure
+    case {'win', 'amb-win'}
+        % Choose a "win" cue that's consistent with the participant's bet
+        if trials(runningVals.currentTrial).Answer == 1
+            cueNum = randsample(1:4,1);
+        elseif trials(runningVals.currentTrial).Answer == 2
+            cueNum = randsample(6:9,1);
+        else
+            % If the participant didn't make a bet, choose a random card
+            cueNum = randsample([1:4 6:9],1);
+        end
+        feedCue = obj.win_cues{cueNum};
+        trials(runningVals.currentTrial).FeedStimulus = obj.win_cue_names{cueNum};
+        
+    case {'lose', 'amb-lose'}
+        % Choose a "lose" cue that's consistent with the participant's bet
+        if trials(runningVals.currentTrial).Answer == 1
+            cueNum = randsample(6:9,1);
+        elseif trials(runningVals.currentTrial).Answer == 2
+            cueNum = randsample(1:4,1);
+        else
+            % If the participant didn't make a bet, choose a random card
+            cueNum = randsample([1:4 6:9],1);
+        end
+        feedCue = obj.loss_cues{cueNum};
+        trials(runningVals.currentTrial).FeedStimulus = obj.loss_cue_names{cueNum};
+        
+    case {'disp', 'relief', 'neutral'}
+        % Choose the neutral feed cue (participant's bet doesn't matter)
+        feedCue = obj.Neut;
+        trials(runningVals.currentTrial).FeedStimulus = obj.neut_cue_name;
+        
+    otherwise
+        error('Invalid procedure name');
 end
 
 % Display the outcome/feed cue

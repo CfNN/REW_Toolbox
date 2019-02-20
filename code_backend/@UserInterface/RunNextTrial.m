@@ -72,8 +72,10 @@ elseif trials(runningVals.currentTrial).Answer == 2
     [~, trials(runningVals.currentTrial).RespCueOn, ~, ~, ~] = Screen('Flip',obj.window);
 end
 
-% Display choice until 3 seconds was up.
-WaitSecs(settings.BetDur-((trials(runningVals.currentTrial).ResponseTimestamp-trials(runningVals.currentTrial).BetOnsetTimestamp)/1000));
+if ~timedout
+    % Display choice until 3 seconds was up.
+    WaitSecs(settings.BetDur-((trials(runningVals.currentTrial).ResponseTimestamp-trials(runningVals.currentTrial).BetOnsetTimestamp)/1000));
+end
 
 % First jittered fixation
 trials(runningVals.currentTrial).Fix1Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));

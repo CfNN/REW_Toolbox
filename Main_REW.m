@@ -38,15 +38,22 @@ InitRunningVals;
 [subjectNumber, sessionNumber, subjectHandedness, cancelled] = GetSessionConfig(settings);
 if (cancelled)
     disp('Session cancelled by experimenter');
-    return; % Stops this script from running to end the experiment session
+    return; % Stops this script from running. Do not use quit() here because PsychToolbox is not yet started
 end
 clear cancelled;
 
 % Initialize the user interface (ui) and PsychToolbox
 ui = UserInterface(settings);
 
+% This must be called after the UI starts, since it uses PsychToolbox functions
+ExperimentSettingsCleanup;
+
 % Use the ui to show experiment instructions
-ui.ShowInstructions();
+quitKeyPressed = ui.ShowInstructions(settings);
+if quitKeyPressed
+    cleanup()
+    return  % Stops this script from running to end experiment session
+end
 
 % Use the ui to show the "ready" screen with a timer, and wait for the MRI
 % trigger (or a key press, depending on what is specified in
@@ -55,23 +62,27 @@ ui.ShowInstructions();
 % triggerTimestamp, there is be a (tiny) time difference between when
 % the two are recorded! For this reason, always use triggerTimestamp for 
 % important calculations if possible. 
-[triggerTimestamp, sessionStartDateTime] = ui.ShowReadyTrigger();
+[triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ui.ShowReadyTrigger(settings);
+if quitKeyPressed
+    cleanup()
+    return  % Stops this script from running to end experiment session
+end
 
 % Use the ui to show a fixation cross for the specified amount of time in seconds
-[sessionStartFixationOnsetTimestamp, sessionStartFixationOffsetTimestamp] = ui.ShowFixation(settings.SessionStartFixationDur, runningVals);
+[sessionStartFixationOnsetTimestamp, sessionStartFixationOffsetTimestamp, quitKeyPressed] = ui.ShowFixation(settings.SessionStartFixationDur, settings, runningVals);
+if quitKeyPressed
+    cleanup()
+    return  % Stops this script from running to end experiment session
+end
 
 % Loop through the trials structure (note - runningVals.currentTrial keeps
 % track of which trial you are on)
 while (runningVals.currentTrial <= length(trials))
     
     [trials, runningVals, quitKeyPressed] = ui.RunNextTrial(trials, settings, runningVals);
-    
     if quitKeyPressed
-        % Clear the screen and unneeded variables
-        sca;
-        clear ui filename;
-        % Stop this script from running to end experiment session
-        return;
+        cleanup();
+        return  % Stops this script from running to end experiment session
     end
 
     % Autosave data in case the experiment is interrupted partway through
@@ -81,13 +92,21 @@ while (runningVals.currentTrial <= length(trials))
     runningVals.currentTrial = runningVals.currentTrial + 1;
 
 end  
-    
-[sessionEndFixationOnsetTimestamp, sessionEndFixationOffsetTimestamp] = ui.ShowFixation(settings.SessionEndFixationDur, runningVals);
 
-% Clear the screen and unneeded variables.
-sca;
-clear ui filename;
+[sessionEndFixationOnsetTimestamp, sessionEndFixationOffsetTimestamp, quitKeyPressed] = ui.ShowFixation(settings.SessionEndFixationDur, settings, runningVals);
+if quitKeyPressed
+    cleanup()
+    return  % Stops this script from running to end experiment session
+end
 
 % Save the data to a .mat, delete autosaved version
 save(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '.mat'], 'trials', 'settings', 'subjectNumber', 'sessionNumber', 'subjectHandedness', 'triggerTimestamp', 'sessionStartDateTime', 'sessionStartFixationOnsetTimestamp', 'sessionStartFixationOffsetTimestamp', 'sessionEndFixationOnsetTimestamp', 'sessionEndFixationOffsetTimestamp');
 delete(['subj' num2str(subjectNumber) '_sess' num2str(sessionNumber) '_' settings.ExperimentName '_AUTOSAVE.mat']);
+
+cleanup()
+
+function cleanup()
+    % Clear the screen and unneeded variables.
+    sca;
+    clear ui filename;
+end

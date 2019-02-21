@@ -1,4 +1,4 @@
-function [triggerTimestamp, sessionStartDateTime] = ShowReadyTrigger(obj)
+function [triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ShowReadyTrigger(obj, settings)
 % SHOWREADYTRIGGER - Shows a 'ready' screen. The experiment can be
 % continued with a key press or an MRI trigger. A timer is included, which
 % allows the experimenter to check whether the MRI is starting up within a 
@@ -12,6 +12,8 @@ function [triggerTimestamp, sessionStartDateTime] = ShowReadyTrigger(obj)
 % triggerTimestamp, but not exactly the same). 
 %
 % See also SHOWINSTRUCTIONS
+
+quitKeyPressed = false;
 
 if obj.settings.UseMRITrigger
     % The trigger device is a keyboard. Loop through keyboards until you find
@@ -50,10 +52,17 @@ timedout = false;
     while ~timedout
         
         sessionStartDateTime = datevec(now);
-        [ keyIsDown, keyTime, ~ ] = KbCheck(activeKeys); 
+        [ keyIsDown, keyTime, keyCode ] = KbCheck(activeKeys); 
         if (keyIsDown)
-            triggerTimestamp = keyTime;
-            break;
+            if ismember(find(keyCode), settings.QuitKeyCodes)
+                triggerTimestamp = NaN;
+                sessionStartDateTime = NaN;
+                quitKeyPressed = true;
+                break;
+            else
+                triggerTimestamp = keyTime;
+                break;
+            end
         end
         
         timer = round(keyTime - tStart);

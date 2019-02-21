@@ -10,6 +10,11 @@ settings.ExperimentName = 'REW';
 % (otherwise a key press will be used)
 settings.UseMRITrigger = false;
 
+% Enter the names of the key(s) that you want to designate as "quit keys":
+% When you press one of these, the session will immediately end (with data
+% autosaved).
+settings.QuitKeyNames = {'q', 'escape'};
+
 % Set to "true" to display live performance metrics at the bottom of the 
 % screen during the experiment. To hide the metrics, set to "false"
 settings.DisplayPerfMetrics = true;

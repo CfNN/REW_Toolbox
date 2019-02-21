@@ -176,13 +176,15 @@ classdef UserInterface < handle
             obj.neut_cue_name = 'Neut.jpg';
         end
         
-        ShowInstructions(obj);
+        quitKeyPressed = ShowInstructions(obj, settings);
         
-        [triggerTimestamp, sessionStartDateTime] = ShowReadyTrigger(obj);
+        [triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ShowReadyTrigger(obj, settings);
         
-        [onsetTimestamp, offsetTimestamp] = ShowFixation(obj, duration, runningVals);
+        [onsetTimestamp, offsetTimestamp, quitKeyPressed] = ShowFixation(obj, duration, settings, runningVals);
         
         [trials, runningVals, quitKeyPressed] = RunNextTrial(obj, trials, settings, runningVals);
+        
+        quitKeyPressed = WaitAndCheckQuit(obj, duration, settings);
         
     end
     

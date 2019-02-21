@@ -11,11 +11,11 @@ function [trials, runningVals, quitKeyPressed] = RunNextTrial(obj, trials, setti
 
 % If the escape or q key is pressed, this will be set to true and passed as 
 % such to the Main_SSRT script, which will then end the experiment session. 
-quitKeyPressed = false;
+quitKeyPressed = false; %#ok<NASGU>
 
 % Call keyboard or buttonbox code
 % Specify allowable key names, restrict input to these
-activeKeys = [KbName('1') KbName('2') KbName('1!') KbName('2@') KbName('Escape') KbName('q')];
+activeKeys = [KbName('1') KbName('2') KbName('1!') KbName('2@') settings.QuitKeyCodes];
 RestrictKeysForKbCheck(activeKeys);
 
 keyMap = containers.Map;
@@ -38,9 +38,9 @@ while ~timedout
     if (keyIsDown)
         
         % Quit if quit key pressed
-        if strcmpi(KbName(keyCode), 'q') || strcmpi(KbName(keyCode), 'escape')
-                quitKeyPressed = true;
-                return;
+        if ismember(find(keyCode), settings.QuitKeyCodes)
+            quitKeyPressed = true;
+            return;
         end
         
         trials(runningVals.currentTrial).ResponseTimestamp = keyTime;
@@ -74,12 +74,15 @@ end
 
 if ~timedout
     % Display choice until 3 seconds was up.
-    WaitSecs(settings.BetDur-((trials(runningVals.currentTrial).ResponseTimestamp-trials(runningVals.currentTrial).BetOnsetTimestamp)/1000));
+    quitKeyPressed = obj.WaitAndCheckQuit(settings.BetDur-((trials(runningVals.currentTrial).ResponseTimestamp-trials(runningVals.currentTrial).BetOnsetTimestamp)/1000), settings);
+    if quitKeyPressed
+        return;
+    end
 end
 
 % First jittered fixation
 trials(runningVals.currentTrial).Fix1Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));
-[trials(runningVals.currentTrial).Fix1OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix1Dur, runningVals);
+[trials(runningVals.currentTrial).Fix1OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix1Dur, settings, runningVals);
 
 % Choose expectancy cue based on procedure name
 switch trials(runningVals.currentTrial).Procedure
@@ -108,12 +111,18 @@ Screen('DrawTexture', obj.window, expCue, []);
 obj.DrawPerformanceMetrics(runningVals);
 [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window); % GetSecs called internally for timestamp
 
-% Expectancy duaration
-WaitSecs(settings.ExpDur);
+% Expectancy duration
+quitKeyPressed = obj.WaitAndCheckQuit(settings.ExpDur, settings);
+if quitKeyPressed
+    return;
+end
 
 % Second jittered fixation
 trials(runningVals.currentTrial).Fix2Dur = random(truncate(makedist('Exponential',settings.sFixDurMean),settings.sFixDurMin,settings.sFixDurMax));
-[trials(runningVals.currentTrial).Fix2OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix2Dur, runningVals);
+[trials(runningVals.currentTrial).Fix2OnsetTimestamp, ~, quitKeyPressed] = obj.ShowFixation(trials(runningVals.currentTrial).Fix2Dur, settings, runningVals);
+if quitKeyPressed
+    return;
+end
 
 % Determine the outcome/"feed" cue to be used and log the feed cue name
 switch trials(runningVals.currentTrial).Procedure
@@ -156,11 +165,14 @@ end
 Screen('DrawTexture', obj.window, feedCue, []);
 obj.DrawPerformanceMetrics(runningVals);
 [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
-WaitSecs(settings.FeedDur);
+quitKeyPressed = obj.WaitAndCheckQuit(settings.FeedDur, settings);
+if quitKeyPressed
+    return;
+end
     
 % Inter-trial interval (ITI)
 trials(runningVals.currentTrial).Fix3Dur = random(truncate(makedist('Exponential',settings.FixDurMean),settings.FixDurMin,settings.FixDurMax));
-[trials(runningVals.currentTrial).Fix3OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix3Dur, runningVals);
+[trials(runningVals.currentTrial).Fix3OnsetTimestamp, ~, quitKeyPressed] = obj.ShowFixation(trials(runningVals.currentTrial).Fix3Dur, settings, runningVals);
 
 % Re-enable all keys (restricted during trial)
 RestrictKeysForKbCheck([]);

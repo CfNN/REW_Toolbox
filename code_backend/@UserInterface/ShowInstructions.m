@@ -7,9 +7,10 @@ function quitKeyPressed = ShowInstructions(obj, settings)
 % Default value, will be set to true if the quit key is pressed
 quitKeyPressed = false;
 
-% User can proceed by hitting any key. 
-% Change to (eg.) activeKeys = [KbName('space'), KbName('return')] to only 
-% respond to the space or enter keys. 
+% Experimenter can proceed by hitting any key. 
+% Change to (eg.) activeKeys = [KbName('space'), KbName('return') settings.QuitKeyCodes] 
+% to only respond to the space or enter keys. You must include the
+% QuitKeyCodes if you want to be able to quit from this screen.
 activeKeys = [];
 RestrictKeysForKbCheck(activeKeys);
 
@@ -34,7 +35,7 @@ DrawFormattedText(obj.window, 'Card Guessing Game', 'center', 'center', obj.c_ye
 
 Screen('Flip', obj.window); % Flip to the screen
 
-[~, keyCode, ~] = KbStrokeWait; % Wait for key press
+[~, keyCode, ~] = KbStrokeWait(settings.ControlDeviceUsageNumber); % Wait for key press
 
 % quit if quit key was pressed
 if ismember(find(keyCode), settings.QuitKeyCodes)
@@ -49,7 +50,7 @@ DrawFormattedText(obj.window, instructions, 'center', 'center', obj.c_yellow);
 
 Screen('Flip', obj.window); % Flip to the screen
 
-[~, keyCode, ~] = KbStrokeWait; % Wait for key press
+[~, keyCode, ~] = KbStrokeWait(settings.ControlDeviceUsageNumber); % Wait for key press
 
 % quit if quit key was pressed
 if ismember(find(keyCode), settings.QuitKeyCodes)

@@ -13,30 +13,33 @@ function [triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ShowReadyTri
 %
 % See also SHOWINSTRUCTIONS
 
-quitKeyPressed = false;
+% If MRI trigger not used, user can proceed by hitting any key. 
+% Change to (eg.) activeKeys = [KbName('space'), KbName('return') settings.QuitKeyCodes] 
+% to only respond to the space or enter keys. You must include the
+% QuitKeyCodes if you want to be able to quit from this screen.
+activeKeys = [];
+RestrictKeysForKbCheck(activeKeys);
 
 if settings.UseMRITrigger
     % The trigger device is a keyboard. Loop through keyboards until you find
     %  one with a vendor ID that matches the trigger device. For MRI trigger 
     %  use 'Current Designs, Inc.'
-    trigger=-1;
-    Devices = PsychHID('Devices');
-    for i=1:size(Devices,2)
-        if (strcmp(Devices(i).usageName,'Keyboard') && strcmp(Devices(i).manufacturer,'Current Designs, Inc.'))
-            trigger=i;
+    MRIUsageNumber=-1;
+    LoadPsychHID;
+    devices = PsychHID('devices');
+    for i=1:numel(devices)
+        if (strcmp(devices(i).usageName, settings.MRIUsageName) && strcmp(devices(i).manufacturer, settings.MRIManufacturer))
+            MRIUsageNumber=devices(i).usageNumber;
             break;
         end
     end
-    if trigger==-1
-        error('No trigger device detected on your system')
+    if MRIUsageNumber==-1
+        fprintf(2,'\nERROR: No trigger device detected on your system\n')
+        triggerTimestamp = NaN;
+        sessionStartDateTime = NaN;
+        quitKeyPressed = true;
+        return;
     end
-    
-    activeKeys = trigger; % Only allow the trigger to start the experiment
-else
-    % If MRI trigger not used, user can proceed by hitting any key. 
-    % Change to (eg.) activeKeys = [KbName('space'), KbName('return')] to 
-    % only respond to the space or enter keys. 
-    activeKeys = [];
 end
 
 RestrictKeysForKbCheck(activeKeys);
@@ -48,11 +51,11 @@ prevTimer = -1;
 
 tStart = GetSecs;
 
+quitKeyPressed = false;
 timedout = false;
     while ~timedout
         
-        sessionStartDateTime = datevec(now);
-        [ keyIsDown, keyTime, keyCode ] = KbCheck(activeKeys); 
+        [ keyIsDown, keyTime, keyCode ] = KbCheck(settings.ControlDeviceUsageNumber);
         if (keyIsDown)
             if ismember(find(keyCode), settings.QuitKeyCodes)
                 triggerTimestamp = NaN;
@@ -60,6 +63,18 @@ timedout = false;
                 quitKeyPressed = true;
                 break;
             else
+                if ~settings.UseMRITrigger
+                    sessionStartDateTime = datevec(now);
+                    triggerTimestamp = keyTime;
+                    break;
+                end
+            end
+        end
+        
+        if settings.UseMRITrigger
+            [ keyIsDown, keyTime, ~] = KbCheck(MRIUsageNumber);
+            if keyIsDown
+                sessionStartDateTime = datevec(now);
                 triggerTimestamp = keyTime;
                 break;
             end

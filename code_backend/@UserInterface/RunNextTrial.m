@@ -13,17 +13,6 @@ function [trials, runningVals, quitKeyPressed] = RunNextTrial(obj, trials, setti
 % such to the Main_SSRT script, which will then end the experiment session. 
 quitKeyPressed = false; %#ok<NASGU>
 
-% Call keyboard or buttonbox code
-% Specify allowable key names, restrict input to these
-activeKeys = [KbName('1') KbName('2') KbName('1!') KbName('2@') settings.QuitKeyCodes];
-RestrictKeysForKbCheck(activeKeys);
-
-keyMap = containers.Map;
-keyMap('1') = 1;
-keyMap('2') = 2;
-keyMap('1!') = 1;
-keyMap('2@') = 2;
-
 % Display the bet cue
 Screen('DrawTexture', obj.window, obj.choice, []);
 obj.DrawPerformanceMetrics(settings, runningVals);
@@ -33,22 +22,35 @@ trials(runningVals.currentTrial).BetOnsetTimestamp = BetCueOn;
 timedout = false;
 while ~timedout
     
-    % Check for keyboard presses while also getting a timestamp (1=lower, 2=higher)
-    [ keyIsDown, keyTime, keyCode ] = KbCheck; % keyTime is from an internal call to GetSecs
+    % Check for responses while also getting a timestamp (1 = lower, 2 = higher)
+    RestrictKeysForKbCheck([settings.RespondLowerKeyCodes, settings.RespondHigherKeyCodes]);
+    [ keyIsDown, keyTime, keyCode ] = KbCheck(settings.RespondDeviceUsageNumber); % keyTime is from an internal call to GetSecs
+    RestrictKeysForKbCheck([]);
+    
     if (keyIsDown)
-        
-        % Quit if quit key pressed
-        if ismember(find(keyCode), settings.QuitKeyCodes)
-            quitKeyPressed = true;
-            return;
-        end
         
         trials(runningVals.currentTrial).ResponseTimestamp = keyTime;
         trials(runningVals.currentTrial).BetRT = keyTime - BetCueOn;
         runningVals.LastGoRT = keyTime - BetCueOn; % For live performance metrics
-        trials(runningVals.currentTrial).Answer = keyMap(KbName(keyCode));
+        
+        if ismember(find(keyCode), settings.RespondLowerKeyCodes)
+            trials(runningVals.currentTrial).Answer = 1;
+        elseif ismember(find(keyCode), settings.RespondHigherKeyCodes)
+            trials(runningVals.currentTrial).Answer = 2;
+        end
+        
         break;
-    end 
+    end
+    
+    % Check for quit key press
+    RestrictKeysForKbCheck(settings.QuitKeyCodes);
+    [ keyIsDown, ~, keyCode ] = KbCheck(settings.ControlDeviceUsageNumber); % keyTime is from an internal call to GetSecs
+    RestrictKeysForKbCheck([]);
+    
+    if keyIsDown && ismember(find(keyCode), settings.QuitKeyCodes)
+        quitKeyPressed = true;
+        return;
+    end
     
     % Time out after BetDur if no key is pressed
     if ((keyTime - BetCueOn) > settings.BetDur)

@@ -9,6 +9,22 @@ settings.ExperimentName = 'REW';
 % Set whether an MRI trigger will be used to start the experiment
 % (otherwise a key press will be used)
 settings.UseMRITrigger = false;
+settings.MRIManufacturer = 'Current Designs, Inc.';
+settings.MRIUsageName = 'Keyboard';
+
+% Usage number of the device that the participant will use to make their
+% responses.
+settings.RespondDeviceUsageNumber = 0;
+
+% Usage number of the keyboard/other device used to control the flow of the
+% experiment (e.g. pressing "continue" on instructions screens, pressing
+% the quit key to end the session early).  Should be the same number as 
+% RespondDeviceUsageNumber if you want to use just one keyboard for both. 
+settings.ControlDeviceUsageNumber = 0;
+
+% Enter the keys that can be used to indicate "lower" and "higher" responses.
+settings.RespondLowerKeyNames = {'1', '1!', 'LeftArrow'};
+settings.RespondHigherKeyNames = {'2', '2@', 'RightArrow'};
 
 % Enter the names of the key(s) that you want to designate as "quit keys":
 % When you press one of these, the session will immediately end (with data

@@ -26,7 +26,7 @@ keyMap('2@') = 2;
 
 % Display the bet cue
 Screen('DrawTexture', obj.window, obj.choice, []);
-obj.DrawPerformanceMetrics(runningVals);
+obj.DrawPerformanceMetrics(settings, runningVals);
 [~, BetCueOn, ~, ~, ~] = Screen('Flip',obj.window); % GetSecs called internally for timestamp
 trials(runningVals.currentTrial).BetOnsetTimestamp = BetCueOn;
 
@@ -51,7 +51,7 @@ while ~timedout
     end 
     
     % Time out after BetDur if no key is pressed
-    if ((keyTime - BetCueOn) > obj.settings.BetDur)
+    if ((keyTime - BetCueOn) > settings.BetDur)
         trials(runningVals.currentTrial).Answer = 0;
         timedout = true;
     end
@@ -64,11 +64,11 @@ runningVals = obj.UpdateLivePerfMetrics(runningVals, trials);
 % Display the choice cue
 if trials(runningVals.currentTrial).Answer == 1
     Screen('DrawTexture', obj.window, obj.lower, []);
-    obj.DrawPerformanceMetrics(runningVals);
+    obj.DrawPerformanceMetrics(settings, runningVals);
     [~, trials(runningVals.currentTrial).RespCueOn, ~, ~, ~] = Screen('Flip',obj.window);
 elseif trials(runningVals.currentTrial).Answer == 2
     Screen('DrawTexture', obj.window, obj.higher, []);
-    obj.DrawPerformanceMetrics(runningVals);
+    obj.DrawPerformanceMetrics(settings, runningVals);
     [~, trials(runningVals.currentTrial).RespCueOn, ~, ~, ~] = Screen('Flip',obj.window);
 end
 
@@ -108,7 +108,7 @@ end
 
 % Display expectancy cue, log onset time
 Screen('DrawTexture', obj.window, expCue, []);
-obj.DrawPerformanceMetrics(runningVals);
+obj.DrawPerformanceMetrics(settings, runningVals);
 [~, trials(runningVals.currentTrial).ExpOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window); % GetSecs called internally for timestamp
 
 % Expectancy duration
@@ -163,7 +163,7 @@ end
 
 % Display the outcome/feed cue
 Screen('DrawTexture', obj.window, feedCue, []);
-obj.DrawPerformanceMetrics(runningVals);
+obj.DrawPerformanceMetrics(settings, runningVals);
 [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 quitKeyPressed = obj.WaitAndCheckQuit(settings.FeedDur, settings);
 if quitKeyPressed

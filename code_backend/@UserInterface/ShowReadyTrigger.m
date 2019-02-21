@@ -15,7 +15,7 @@ function [triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ShowReadyTri
 
 quitKeyPressed = false;
 
-if obj.settings.UseMRITrigger
+if settings.UseMRITrigger
     % The trigger device is a keyboard. Loop through keyboards until you find
     %  one with a vendor ID that matches the trigger device. For MRI trigger 
     %  use 'Current Designs, Inc.'

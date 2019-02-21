@@ -3,9 +3,6 @@ classdef UserInterface < handle
     % script 'Main_SSRT.m' works primarily by using functions in this class.
     
     properties (GetAccess=private)
-        % Settings (initialized once by main script, never change during
-        % experiment)
-        settings;
         
         % Screen properties
         window;
@@ -63,9 +60,7 @@ classdef UserInterface < handle
     end
     
     methods
-        function obj = UserInterface(settings_init)
-            
-            obj.settings = settings_init;
+        function obj = UserInterface(settings)  %#ok<INUSD>
             
             % Seed random number generator
             rng('shuffle');
@@ -190,6 +185,6 @@ classdef UserInterface < handle
     
     methods (Access = private)
         runningVals = UpdateLivePerfMetrics(obj, runningVals, trials);
-        DrawPerformanceMetrics(obj, runningVals);
+        DrawPerformanceMetrics(obj, settings, runningVals);
     end
 end

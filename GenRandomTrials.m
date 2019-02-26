@@ -1,6 +1,9 @@
 function GenRandomTrials(n_block)
 % GENRANDOMTRIALS - Generates a pseudo-random trial sequence. 
 % n_block: Number of blocks of trials.
+%
+% Example usage: GenRandomTrials(3)
+% (generates a trial sequence with 3 randomized blocks)
 
 
 % Seed random number generator. Otherwise, the exact same 'random' sequence 

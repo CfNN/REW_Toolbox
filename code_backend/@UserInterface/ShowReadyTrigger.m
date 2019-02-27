@@ -24,16 +24,16 @@ if settings.UseMRITrigger
     % The trigger device is a keyboard. Loop through keyboards until you find
     %  one with a vendor ID that matches the trigger device. For MRI trigger 
     %  use 'Current Designs, Inc.'
-    MRIUsageNumber=-1;
+    MRIIndex=-1;
     LoadPsychHID;
     devices = PsychHID('devices');
     for i=1:numel(devices)
         if (strcmp(devices(i).usageName, settings.MRIUsageName) && strcmp(devices(i).manufacturer, settings.MRIManufacturer))
-            MRIUsageNumber=devices(i).usageNumber;
+            MRIIndex=devices(i).index;
             break;
         end
     end
-    if MRIUsageNumber==-1
+    if MRIIndex==-1
         fprintf(2,'\nERROR: No trigger device detected on your system\n')
         triggerTimestamp = NaN;
         sessionStartDateTime = NaN;
@@ -55,7 +55,7 @@ quitKeyPressed = false;
 timedout = false;
     while ~timedout
         
-        [ keyIsDown, keyTime, keyCode ] = KbCheck(settings.ControlDeviceUsageNumber);
+        [ keyIsDown, keyTime, keyCode ] = KbCheck(settings.ControlDeviceIndex);
         if (keyIsDown)
             if ismember(find(keyCode), settings.QuitKeyCodes)
                 triggerTimestamp = NaN;
@@ -72,7 +72,7 @@ timedout = false;
         end
         
         if settings.UseMRITrigger
-            [ keyIsDown, keyTime, ~] = KbCheck(MRIUsageNumber);
+            [ keyIsDown, keyTime, ~] = KbCheck(MRIIndex);
             if keyIsDown
                 sessionStartDateTime = datevec(now);
                 triggerTimestamp = keyTime;

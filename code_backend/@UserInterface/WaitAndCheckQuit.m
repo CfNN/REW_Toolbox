@@ -7,7 +7,7 @@ function quitKeyPressed = WaitAndCheckQuit(obj, duration, settings) %#ok<INUSL>
 activeKeys = settings.QuitKeyCodes;
 RestrictKeysForKbCheck(activeKeys);
 
-[~, keyCode, ~] = KbWait(settings.ControlDeviceUsageNumber, [], GetSecs + duration);
+[~, keyCode, ~] = KbWait(settings.ControlDeviceIndex, [], GetSecs + duration);
 
 quitKeyPressed = ismember(find(keyCode), settings.QuitKeyCodes);
 

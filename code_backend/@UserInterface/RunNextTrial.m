@@ -24,7 +24,7 @@ while ~timedout
     
     % Check for responses while also getting a timestamp (1 = lower, 2 = higher)
     RestrictKeysForKbCheck([settings.RespondLowerKeyCodes, settings.RespondHigherKeyCodes]);
-    [ keyIsDown, keyTime, keyCode ] = KbCheck(settings.RespondDeviceUsageNumber); % keyTime is from an internal call to GetSecs
+    [ keyIsDown, keyTime, keyCode ] = KbCheck(settings.RespondDeviceIndex); % keyTime is from an internal call to GetSecs
     RestrictKeysForKbCheck([]);
     
     if (keyIsDown)
@@ -44,7 +44,7 @@ while ~timedout
     
     % Check for quit key press
     RestrictKeysForKbCheck(settings.QuitKeyCodes);
-    [ keyIsDown, ~, keyCode ] = KbCheck(settings.ControlDeviceUsageNumber); % keyTime is from an internal call to GetSecs
+    [ keyIsDown, ~, keyCode ] = KbCheck(settings.ControlDeviceIndex); % keyTime is from an internal call to GetSecs
     RestrictKeysForKbCheck([]);
     
     if keyIsDown && ismember(find(keyCode), settings.QuitKeyCodes)

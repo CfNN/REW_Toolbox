@@ -35,7 +35,7 @@ DrawFormattedText(obj.window, 'Card Guessing Game', 'center', 'center', obj.c_ye
 
 Screen('Flip', obj.window); % Flip to the screen
 
-[~, keyCode, ~] = KbStrokeWait(settings.ControlDeviceUsageNumber); % Wait for key press
+[~, keyCode, ~] = KbStrokeWait(settings.ControlDeviceIndex); % Wait for key press
 
 % quit if quit key was pressed
 if ismember(find(keyCode), settings.QuitKeyCodes)
@@ -50,7 +50,7 @@ DrawFormattedText(obj.window, instructions, 'center', 'center', obj.c_yellow);
 
 Screen('Flip', obj.window); % Flip to the screen
 
-[~, keyCode, ~] = KbStrokeWait(settings.ControlDeviceUsageNumber); % Wait for key press
+[~, keyCode, ~] = KbStrokeWait(settings.ControlDeviceIndex); % Wait for key press
 
 % quit if quit key was pressed
 if ismember(find(keyCode), settings.QuitKeyCodes)

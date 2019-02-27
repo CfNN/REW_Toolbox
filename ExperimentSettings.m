@@ -12,15 +12,19 @@ settings.UseMRITrigger = false;
 settings.MRIManufacturer = 'Current Designs, Inc.';
 settings.MRIUsageName = 'Keyboard';
 
-% Usage number of the device that the participant will use to make their
-% responses.
-settings.RespondDeviceUsageNumber = 0;
+% Index of the keyboard/other device that the participant will use to make
+% their responses. To see keyboard device indices, type GetKeyboardIndices()
+% into the MATLAB command window and use the resulting value. For other
+% device indices, type devices = PsychHID('devices'), and examine the
+% "index" field in the "devices" struct that is created. To enable any
+% device/keyboard to make a response, leave the field equal to []. 
+settings.RespondDeviceIndex = [];
 
-% Usage number of the keyboard/other device used to control the flow of the
+% Index of the keyboard/other device used to control the flow of the
 % experiment (e.g. pressing "continue" on instructions screens, pressing
-% the quit key to end the session early).  Should be the same number as 
-% RespondDeviceUsageNumber if you want to use just one keyboard for both. 
-settings.ControlDeviceUsageNumber = 0;
+% the quit key to end the session early). Set by the same procedure as
+% settings.RespondDeviceIndex above.
+settings.ControlDeviceIndex = [];
 
 % Enter the keys that can be used to indicate "lower" and "higher" responses.
 settings.RespondLowerKeyNames = {'1', '1!', 'LeftArrow'};

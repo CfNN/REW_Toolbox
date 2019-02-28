@@ -14,6 +14,10 @@ function [triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ShowReadyTri
 % See also SHOWINSTRUCTIONS
 
 
+% Make sure output vars are set to something even if quit key is pressed
+triggerTimestamp = NaN;
+sessionStartDateTime = NaN;
+
 % If MRI trigger not used, user can proceed by hitting any key. 
 % Change to (eg.) activeKeys = [KbName('space'), KbName('return') settings.QuitKeyCodes] 
 % to only respond to the space or enter keys. You must include the
@@ -55,8 +59,6 @@ timedout = false;
         [ keyIsDown, keyTime, keyCode ] = KbCheck(settings.ControlDeviceIndex);
         if (keyIsDown)
             if ismember(find(keyCode), settings.QuitKeyCodes)
-                triggerTimestamp = NaN;
-                sessionStartDateTime = NaN;
                 quitKeyPressed = true;
                 break;
             else

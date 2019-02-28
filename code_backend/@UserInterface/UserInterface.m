@@ -174,20 +174,20 @@ classdef UserInterface < handle
             obj.neut_cue_name = 'Neut.jpg';
         end
         
-        quitKeyPressed = ShowInstructions(obj, settings);
         
+        quitKeyPressed = ShowInstructions(obj, settings);
+
         [triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ShowReadyTrigger(obj, settings);
         
         [onsetTimestamp, offsetTimestamp, quitKeyPressed] = ShowFixation(obj, duration, settings, runningVals);
         
         [trials, runningVals, quitKeyPressed] = RunNextTrial(obj, trials, settings, runningVals);
         
-        quitKeyPressed = WaitAndCheckQuit(obj, duration, settings);
-        
     end
     
     methods (Access = private)
         runningVals = UpdateLivePerfMetrics(obj, runningVals, trials);
         DrawPerformanceMetrics(obj, settings, runningVals);
+        quitKeyPressed = WaitAndCheckQuit(obj, duration, settings);
     end
 end

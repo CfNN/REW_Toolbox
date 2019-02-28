@@ -13,6 +13,7 @@ function [triggerTimestamp, sessionStartDateTime, quitKeyPressed] = ShowReadyTri
 %
 % See also SHOWINSTRUCTIONS
 
+
 % If MRI trigger not used, user can proceed by hitting any key. 
 % Change to (eg.) activeKeys = [KbName('space'), KbName('return') settings.QuitKeyCodes] 
 % to only respond to the space or enter keys. You must include the
@@ -28,7 +29,7 @@ if settings.UseMRITrigger
     LoadPsychHID;
     devices = PsychHID('devices');
     for i=1:numel(devices)
-        if (strcmp(devices(i).usageName, settings.MRIUsageName) && strcmp(devices(i).manufacturer, settings.MRIManufacturer))
+        if (strcmp(devices(i).usageName, settings.MRITriggerUsageName) && strcmp(devices(i).manufacturer, settings.MRITriggerManufacturer))
             MRIIndex=devices(i).index;
             break;
         end
@@ -45,11 +46,9 @@ end
 Screen('TextFont', obj.window, 'Courier New');
 Screen('TextSTyle', obj.window, 0); % 1 makes it bold;
 
-prevTimer = -1;
-
-tStart = GetSecs;
-
 quitKeyPressed = false;
+prevTimer = -1;
+tStart = GetSecs;
 timedout = false;
     while ~timedout
         

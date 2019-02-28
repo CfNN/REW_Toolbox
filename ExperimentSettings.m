@@ -9,8 +9,8 @@ settings.ExperimentName = 'REW';
 % Set whether an MRI trigger will be used to start the experiment
 % (otherwise a key press will be used)
 settings.UseMRITrigger = false;
-settings.MRIManufacturer = 'Current Designs, Inc.';
-settings.MRIUsageName = 'Keyboard';
+settings.MRITriggerManufacturer = 'Current Designs, Inc.';
+settings.MRITriggerUsageName = 'Keyboard';
 
 % Index of the keyboard/other device that the participant will use to make
 % their responses. To see keyboard device indices, type GetKeyboardIndices()

@@ -42,8 +42,6 @@ if settings.UseMRITrigger
     end
 end
 
-RestrictKeysForKbCheck(activeKeys);
-
 Screen('TextFont', obj.window, 'Courier New');
 Screen('TextSTyle', obj.window, 0); % 1 makes it bold;
 

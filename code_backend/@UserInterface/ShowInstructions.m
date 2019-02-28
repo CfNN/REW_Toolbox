@@ -1,7 +1,7 @@
 function quitKeyPressed = ShowInstructions(obj, settings)
 % SHOWINSTRUCTIONS - Show a series of introductory/instruction screens
 %   Usage: ShowInstructions();
-% See also SHOWREADYTIMER
+% See also SHOWREADYTRIGGER
 % -------------------
 
 % Default value, will be set to true if the quit key is pressed

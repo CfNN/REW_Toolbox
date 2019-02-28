@@ -35,7 +35,7 @@ if settings.UseMRITrigger
     for i=1:numel(devices)
         if (strcmp(devices(i).usageName, settings.MRITriggerUsageName) && strcmp(devices(i).manufacturer, settings.MRITriggerManufacturer))
             MRIIndex=devices(i).index;
-            break;
+            break
         end
     end
     if MRIIndex==-1
@@ -43,7 +43,7 @@ if settings.UseMRITrigger
         triggerTimestamp = NaN;
         sessionStartDateTime = NaN;
         quitKeyPressed = true;
-        return;
+        return
     end
 end
 
@@ -60,12 +60,12 @@ timedout = false;
         if (keyIsDown)
             if ismember(find(keyCode), settings.QuitKeyCodes)
                 quitKeyPressed = true;
-                break;
+                break
             else
                 if ~settings.UseMRITrigger
                     sessionStartDateTime = datevec(now);
                     triggerTimestamp = keyTime;
-                    break;
+                    break
                 end
             end
         end
@@ -75,7 +75,7 @@ timedout = false;
             if keyIsDown
                 sessionStartDateTime = datevec(now);
                 triggerTimestamp = keyTime;
-                break;
+                break
             end
         end
         

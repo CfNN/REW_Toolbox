@@ -32,11 +32,13 @@ sequence = cond_names([trials.ProcedureNum]);
 [trials.Procedure] = sequence{:};
 
 % Set up fields for data logging, set to default values for all trials 
-% (typically NaN or 'Not a Number', or "False" for booleans)
+% (typically NaN or 'Not a Number', or "False" for booleans). The order of
+% the list below determines the order of the fields in the trials array.
 trials = setdefault(trials, 'ExpectancyStimulus', NaN);
 trials = setdefault(trials, 'BetOnsetTimestamp', NaN);
 trials = setdefault(trials, 'ResponseTimestamp', NaN);
 trials = setdefault(trials, 'BetRT', NaN);
+trials = setdefault(trials, 'ResponseKeyName', 'none');
 trials = setdefault(trials, 'Answer', NaN);
 trials = setdefault(trials, 'RespCueOn', NaN);
 trials = setdefault(trials, 'Fix1OnsetTimestamp', NaN);

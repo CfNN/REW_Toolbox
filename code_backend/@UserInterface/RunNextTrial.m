@@ -33,6 +33,8 @@ while ~timedout
         trials(runningVals.currentTrial).BetRT = keyTime - BetCueOn;
         runningVals.LastGoRT = keyTime - BetCueOn; % For live performance metrics
         
+        trials(runningVals.currentTrial).ResponseKeyName = KbName(keyCode);
+        
         if ismember(find(keyCode), settings.RespondLowerKeyCodes)
             trials(runningVals.currentTrial).Answer = 1;
         elseif ismember(find(keyCode), settings.RespondHigherKeyCodes)

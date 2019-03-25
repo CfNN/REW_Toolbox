@@ -118,27 +118,27 @@ classdef UserInterface < handle
             higherFig = imread('images/higher.jpg');
             lowerFig = imread('images/lower.jpg');
             fixFig = imread('images/fixation.jpg');
-            ExpWinFig = imread('images/ExpWin.jpg');
-            ExpLossFig = imread('images/ExpLoss.jpg');
-            ExpAmbFig = imread('images/ExpAmb.jpg');
-            ExpNeutFig = imread('images/ExpNeut.jpg');
-            Loss1Fig = imread('images/Loss1.jpg');
-            Loss2Fig = imread('images/Loss2.jpg');
-            Loss3Fig = imread('images/Loss3.jpg');
-            Loss4Fig = imread('images/Loss4.jpg');
-            Loss6Fig = imread('images/Loss6.jpg');
-            Loss7Fig = imread('images/Loss7.jpg');
-            Loss8Fig = imread('images/Loss8.jpg');
-            Loss9Fig = imread('images/Loss9.jpg');
+            ExpWinFig = imread('images/Win.jpg');
+            ExpLossFig = imread('images/Lose.jpg');
+            ExpAmbFig = imread('images/Amb.jpg');
+            ExpNeutFig = imread('images/Neutral.jpg');
+            Loss1Fig = imread('images/Lose75Cents.jpg');
+            Loss2Fig = imread('images/Lose75Cents.jpg');
+            Loss3Fig = imread('images/Lose75Cents.jpg');
+            Loss4Fig = imread('images/Lose75Cents.jpg');
+            Loss6Fig = imread('images/Lose75Cents.jpg');
+            Loss7Fig = imread('images/Lose75Cents.jpg');
+            Loss8Fig = imread('images/Lose75Cents.jpg');
+            Loss9Fig = imread('images/Lose75Cents.jpg');
             NeutFig = imread('images/Neut.jpg');
-            Win1Fig = imread('images/Win1.jpg');
-            Win2Fig = imread('images/Win2.jpg');
-            Win3Fig = imread('images/Win3.jpg');
-            Win4Fig = imread('images/Win4.jpg');
-            Win6Fig = imread('images/Win6.jpg');
-            Win7Fig = imread('images/Win7.jpg');
-            Win8Fig = imread('images/Win8.jpg');
-            Win9Fig = imread('images/Win9.jpg');
+            Win1Fig = imread('images/WinADollar.jpg');
+            Win2Fig = imread('images/WinADollar.jpg');
+            Win3Fig = imread('images/WinADollar.jpg');
+            Win4Fig = imread('images/WinADollar.jpg');
+            Win6Fig = imread('images/WinADollar.jpg');
+            Win7Fig = imread('images/WinADollar.jpg');
+            Win8Fig = imread('images/WinADollar.jpg');
+            Win9Fig = imread('images/WinADollar.jpg');
             
             obj.choice = Screen('MakeTexture', obj.window, choiceFig);
             obj.higher = Screen('MakeTexture', obj.window, higherFig);
@@ -166,11 +166,11 @@ classdef UserInterface < handle
             obj.Win8 = Screen('MakeTexture', obj.window, Win8Fig);
             obj.Win9 = Screen('MakeTexture', obj.window, Win9Fig);
             
-            obj.exp_cue_names = {'ExpWin.jpg','ExpLoss.jpg','ExpAmb.jpg','ExpNeut.jpg'};
+            obj.exp_cue_names = {'Win.jpg','Loss.jpg','Amb.jpg','Neutral.jpg'};
             obj.win_cues = {obj.Win1,obj.Win2,obj.Win3,obj.Win4, NaN, obj.Win6,obj.Win7,obj.Win8,obj.Win9};
-            obj.win_cue_names = {'Win1.jpg', 'Win2.jpg', 'Win3.jpg', 'Win4.jpg', NaN, 'Win6.jpg', 'Win7.jpg', 'Win8.jpg', 'Win9.jpg'};
+            obj.win_cue_names = {'WinADollar.jpg', 'WinADollar.jpg', 'WinADollar.jpg', 'WinADollar.jpg', NaN, 'WinADollar.jpg', 'WinADollar.jpg', 'WinADollar.jpg', 'WinADollar.jpg'};
             obj.loss_cues = {obj.Loss1,obj.Loss2,obj.Loss3,obj.Loss4, NaN, obj.Loss6,obj.Loss7,obj.Loss8,obj.Loss9};
-            obj.loss_cue_names = {'Loss1.jpg', 'Loss2.jpg', 'Loss3.jpg', 'Loss4.jpg', NaN, 'Loss6.jpg', 'Loss7.jpg', 'Loss8.jpg', 'Loss9.jpg'};
+            obj.loss_cue_names = {'Lose75Cents.jpg', 'Lose75Cents.jpg', 'Lose75Cents.jpg', 'Lose75Cents.jpg', NaN, 'Lose75Cents.jpg', 'Lose75Cents.jpg', 'Lose75Cents.jpg', 'Lose75Cents.jpg'};
             obj.neut_cue_name = 'Neut.jpg';
         end
         

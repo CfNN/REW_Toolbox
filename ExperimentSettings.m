@@ -47,13 +47,13 @@ settings.VariableFixationDur = true;
 % Parameters for fixation duration distribution (truncated exponential):
 % NOT APPLICABLE if settings.VariableFixationDur is set to false
 % Short fixation lengths
-settings.sFixDurMean = 1.0;
-settings.sFixDurMin = 0.5;
-settings.sFixDurMax = 1.5;
+settings.sFixDurMean = 1.25;
+settings.sFixDurMin = 1.75;
+settings.sFixDurMax = 2.5;
 
 % ITI fixation length
-settings.FixDurMean = 1.5;
-settings.FixDurMin = 0.5;
+settings.FixDurMean = 1;
+settings.FixDurMin = 0.75;
 settings.FixDurMax = 2.5;
 
 % Constant duration of fixation before each trial
@@ -63,17 +63,17 @@ settings.FixDur = 0.5; % seconds
 % Duration to display fixation cross before and after running the trials
 % (e.g. to collect 'resting' data and avoid truncating HRF in MRI studies)
 settings.SessionStartFixationDur = 6; % seconds
-settings.SessionEndFixationDur = 6; % seconds
+settings.SessionEndFixationDur = 10; % seconds
 
 %Set variables called by counterbalance
 settings.nconds = 7;
 settings.nblocks = 6;
 
 % Total bet duration.
-settings.BetDur = 3;
+settings.BetDur = 1.5;
 
 % Total RE duration.
-settings.ExpDur = 2;
+settings.ExpDur = 1.25;
 
 % Outcome screen duration
-settings.FeedDur = 1;
+settings.FeedDur = 1.25;

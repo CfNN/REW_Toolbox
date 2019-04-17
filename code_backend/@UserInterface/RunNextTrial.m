@@ -13,6 +13,12 @@ function [trials, runningVals, quitKeyPressed] = RunNextTrial(obj, trials, setti
 % such to the Main_SSRT script, which will then end the experiment session. 
 quitKeyPressed = false; %#ok<NASGU>
 
+% Retrieve the procedure name from the trials structure. If the participant
+% doesn't respond, this temporary variable will be set to 'neutral', but
+% the original "Procedure" field of the trials structure will not be
+% modified.
+procedure = trials(runningVals.currentTrial).Procedure;
+
 % Display the bet cue
 Screen('DrawTexture', obj.window, obj.choice, []);
 obj.DrawPerformanceMetrics(settings, runningVals);
@@ -20,6 +26,7 @@ obj.DrawPerformanceMetrics(settings, runningVals);
 trials(runningVals.currentTrial).BetOnsetTimestamp = BetCueOn;
 
 timedout = false;
+responseKeyPressed = false;
 while ~timedout
     
     % Check for responses while also getting a timestamp (1 = lower, 2 = higher)
@@ -28,6 +35,8 @@ while ~timedout
     RestrictKeysForKbCheck([]);
     
     if (keyIsDown)
+        
+        responseKeyPressed = true;
         
         trials(runningVals.currentTrial).ResponseTimestamp = keyTime;
         trials(runningVals.currentTrial).BetRT = keyTime - BetCueOn;
@@ -65,6 +74,11 @@ end
 % the screen (see ExperimentSettings.m to disable/enable)
 runningVals = obj.UpdateLivePerfMetrics(runningVals, trials);
 
+% If no key was pressed, change the procedure of the current trial to "neutral"
+if ~responseKeyPressed
+    procedure = 'neutral';
+end
+
 % Display the choice cue
 if trials(runningVals.currentTrial).Answer == 1
     Screen('DrawTexture', obj.window, obj.lower, []);
@@ -89,7 +103,7 @@ trials(runningVals.currentTrial).Fix1Dur = random(truncate(makedist('Exponential
 [trials(runningVals.currentTrial).Fix1OnsetTimestamp, ~] = obj.ShowFixation(trials(runningVals.currentTrial).Fix1Dur, settings, runningVals);
 
 % Choose expectancy cue based on procedure name
-switch trials(runningVals.currentTrial).Procedure
+switch procedure
     case {'win', 'disp'}
         expCue = obj.ExpWin;
         trials(runningVals.currentTrial).ExpectancyStimulus = obj.exp_cue_names{1};
@@ -128,8 +142,10 @@ if quitKeyPressed
     return;
 end
 
-% Determine the outcome/"feed" cue to be used and log the feed cue name
-switch trials(runningVals.currentTrial).Procedure
+% Determine the outcome/"feed" cue to be used and log the feed cue name.
+% Also update the winnings counter. Draw the winnings counter here if
+% applicable. 
+switch procedure
     case {'win', 'amb-win'}
         % Choose a "win" cue that's consistent with the participant's bet
         if trials(runningVals.currentTrial).Answer == 1
@@ -142,6 +158,9 @@ switch trials(runningVals.currentTrial).Procedure
         end
         feedCue = obj.win_cues{cueNum};
         trials(runningVals.currentTrial).FeedStimulus = obj.win_cue_names{cueNum};
+        
+        runningVals.winnings = runningVals.winnings+1;
+        drawWinnings = true;
         
     case {'lose', 'amb-lose'}
         % Choose a "lose" cue that's consistent with the participant's bet
@@ -156,10 +175,15 @@ switch trials(runningVals.currentTrial).Procedure
         feedCue = obj.loss_cues{cueNum};
         trials(runningVals.currentTrial).FeedStimulus = obj.loss_cue_names{cueNum};
         
+        runningVals.winnings = runningVals.winnings-0.75;
+        drawWinnings = true;
+        
     case {'disp', 'relief', 'neutral'}
         % Choose the neutral feed cue (participant's bet doesn't matter)
         feedCue = obj.Neut;
         trials(runningVals.currentTrial).FeedStimulus = obj.neut_cue_name;
+        
+        drawWinnings = false;
         
     otherwise
         error('Invalid procedure name');
@@ -167,6 +191,9 @@ end
 
 % Display the outcome/feed cue
 Screen('DrawTexture', obj.window, feedCue, []);
+if drawWinnings
+    obj.DrawWinnings(runningVals);
+end
 obj.DrawPerformanceMetrics(settings, runningVals);
 [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 quitKeyPressed = obj.WaitAndCheckQuit(settings.FeedDur, settings);

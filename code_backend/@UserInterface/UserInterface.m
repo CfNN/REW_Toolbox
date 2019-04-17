@@ -187,6 +187,7 @@ classdef UserInterface < handle
     
     methods (Access = private)
         runningVals = UpdateLivePerfMetrics(obj, runningVals, trials);
+        DrawWinnings(obj, runningVals);
         DrawPerformanceMetrics(obj, settings, runningVals);
         quitKeyPressed = WaitAndCheckQuit(obj, duration, settings);
     end

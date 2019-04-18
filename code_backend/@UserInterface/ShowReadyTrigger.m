@@ -83,9 +83,9 @@ timedout = false;
         
         if timer ~= prevTimer
             Screen('TextSize', obj.window, 48);
-            DrawFormattedText(obj.window, 'Ready to Begin', 'center', 'center', obj.c_yellow);
+            DrawFormattedText(obj.window, 'Ready to Begin', 'center', 'center', obj.c_white);
             Screen('TextSize', obj.window, 36);
-            DrawFormattedText(obj.window, ['Counter: ', num2str(timer)], 'center', obj.screenYpixels * 0.95, obj.c_yellow);
+            DrawFormattedText(obj.window, ['Counter: ', num2str(timer)], 'center', obj.screenYpixels * 0.95, obj.c_white);
             Screen('Flip', obj.window); % Flip to the updated screen
         end
         

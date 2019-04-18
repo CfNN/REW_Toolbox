@@ -14,7 +14,7 @@ end
 Screen('TextSize', obj.window, 60);
 Screen('TextFont', obj.window, 'Courier New');
 Screen('TextSTyle', obj.window, 0); % 0 is regular (not bold, italicized, etc)
-% Change the value in "obj.screenYpixels - 20" to modify the vertical
+% Change the value in "obj.screenYpixels - 140" to modify the vertical
 % position of the winnings counter. 
 DrawFormattedText(obj.window, ['Total winnings: ' moneyStr], 'center', obj.screenYpixels - 140, obj.c_white);
 

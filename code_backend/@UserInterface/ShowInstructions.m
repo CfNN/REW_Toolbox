@@ -27,7 +27,7 @@ Screen('TextSize', obj.window, 80);
 Screen('TextFont', obj.window, 'Courier New');
 Screen('TextSTyle', obj.window, 1); % 1 makes it bold;
 
-DrawFormattedText(obj.window, 'Card Guessing Game', 'center', 'center', obj.c_yellow);
+DrawFormattedText(obj.window, 'Card Guessing Game', 'center', 'center', obj.c_white);
 
 Screen('Flip', obj.window); % Flip to the screen
 
@@ -42,7 +42,7 @@ end
 Screen('TextSize', obj.window, 40);
 Screen('TextSTyle', obj.window, 0);
 
-DrawFormattedText(obj.window, instructions, 'center', 'center', obj.c_yellow);
+DrawFormattedText(obj.window, instructions, 'center', 'center', obj.c_white);
 
 Screen('Flip', obj.window); % Flip to the screen
 

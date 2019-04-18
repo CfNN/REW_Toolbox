@@ -160,7 +160,6 @@ switch procedure
         trials(runningVals.currentTrial).FeedStimulus = obj.win_cue_names{cueNum};
         
         runningVals.winnings = runningVals.winnings+1;
-        drawWinnings = true;
         
     case {'lose', 'amb-lose'}
         % Choose a "lose" cue that's consistent with the participant's bet
@@ -176,14 +175,11 @@ switch procedure
         trials(runningVals.currentTrial).FeedStimulus = obj.loss_cue_names{cueNum};
         
         runningVals.winnings = runningVals.winnings-0.75;
-        drawWinnings = true;
         
     case {'disp', 'relief', 'neutral'}
         % Choose the neutral feed cue (participant's bet doesn't matter)
         feedCue = obj.Neut;
         trials(runningVals.currentTrial).FeedStimulus = obj.neut_cue_name;
-        
-        drawWinnings = false;
         
     otherwise
         error('Invalid procedure name');
@@ -191,9 +187,7 @@ end
 
 % Display the outcome/feed cue
 Screen('DrawTexture', obj.window, feedCue, []);
-if drawWinnings
-    obj.DrawWinnings(runningVals);
-end
+obj.DrawWinnings(runningVals);
 obj.DrawPerformanceMetrics(settings, runningVals);
 [~, trials(runningVals.currentTrial).FeedCueOnsetTimestamp, ~, ~, ~] = Screen('Flip',obj.window);
 quitKeyPressed = obj.WaitAndCheckQuit(settings.FeedDur, settings);
